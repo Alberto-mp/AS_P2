@@ -1,0 +1,21 @@
+FROM debian:bullseye
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && \
+    apt-get install -y vsftpd dos2unix && \
+    (id ftp 2>/dev/null || useradd -m ftp) && \
+    mkdir -p /srv/ftp/publico && \
+    mkdir -p /var/run/vsftpd/empty && \
+    chown -R ftp:ftp /srv/ftp/publico && \
+    chmod -R 755 /srv/ftp/publico
+
+COPY vsftpd.conf /etc/vsftpd.conf
+COPY start.sh /start.sh
+
+RUN dos2unix /etc/vsftpd.conf /start.sh
+RUN chmod +x /start.sh
+
+EXPOSE 21 30000-30009
+
+CMD ["/start.sh"]
