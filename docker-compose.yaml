@@ -1,0 +1,46 @@
+services:
+  ssh-server:
+    build: ./acceso-produccion
+    container_name: ssh-server
+    ports:
+      - "2222:22"  # Exponer el puerto 2222 del host al puerto 22 del contenedor
+    restart: always
+    networks:
+      production_net:
+        ipv4_address: 172.30.0.2 
+  
+  fsamba-ftp:
+    build: ./samba-ftp
+    container_name: samba_ftp_server
+    restart: always
+    networks:
+      dev_net:
+        ipv4_address: 172.40.0.2
+    ports:
+      - "21:21"           # FTP
+      - "139:139"         # Samba
+      - "30000-30009:30000-30009"  # FTP pasivo
+    volumes:
+      - ./samba-ftp:/srv/docs 
+  
+  cliente-test:
+    build: ./cliente-test
+    container_name: cliente_test
+    networks:
+      dev_net:
+        ipv4_address: 172.40.0.100
+    stdin_open: true
+    tty: true
+
+networks:
+  production_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "172.30.0.0/24"
+
+  dev_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "172.40.0.0/24"
