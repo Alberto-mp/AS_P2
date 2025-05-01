@@ -1,0 +1,23 @@
+services:
+  ssh-server:
+    build: .
+    container_name: ssh-server
+    ports:
+      - "2222:22"  # Exponer el puerto 2222 del host al puerto 22 del contenedor
+    restart: always
+    networks:
+      production_net:
+        ipv4_address: 172.30.0.2 
+
+networks:
+  production_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "172.30.0.0/24"
+
+  dev_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "172.40.0.0/24"
