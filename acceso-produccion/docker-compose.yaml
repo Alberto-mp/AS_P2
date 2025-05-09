@@ -1,13 +1,17 @@
 services:
   ssh-server:
     build: .
-    container_name: ssh-server
+    container_name: ssh-client
     ports:
       - "2222:22"  # Exponer el puerto 2222 del host al puerto 22 del contenedor
-    restart: always
+    volumes:
+      - ./.ssh:/.ssh
     networks:
       production_net:
         ipv4_address: 172.30.0.2 
+    privileged: true  # Habilitar privilegios adicionales
+    command: >
+      bash -c "/usr/local/bin/iptables-rules.sh && tail -f /dev/null"
 
 networks:
   production_net:
@@ -16,8 +20,3 @@ networks:
       config:
         - subnet: "172.30.0.0/24"
 
-  dev_net:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: "172.40.0.0/24"

@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   ftp:
     container_name: ftp_server
@@ -8,3 +6,12 @@ services:
       - "21:21"
       - "30000-30009:30000-30009"
     restart: unless-stopped
+    networks:
+      development_net:
+        ipv4_address: 172.40.0.2
+networks:
+  development_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "172.40.0.0/24"
