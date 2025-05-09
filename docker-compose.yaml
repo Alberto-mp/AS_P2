@@ -1,13 +1,16 @@
 services:
-  ssh-server:
+  ssh-client:
     build: ./acceso-produccion
-    container_name: ssh-server
+    container_name: ssh-client
     ports:
-      - "2222:22"  # Exponer el puerto 2222 del host al puerto 22 del contenedor
+      - "2222:22"  # acceso externo por SSH
     restart: always
     networks:
       production_net:
-        ipv4_address: 172.30.0.2 
+        ipv4_address: 172.30.0.2
+      dev_net:  # acceso interno a fsamba-ftp
+        ipv4_address: 172.40.0.10
+
   
   fsamba-ftp:
     build: ./samba-ftp
