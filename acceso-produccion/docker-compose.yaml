@@ -11,7 +11,7 @@ services:
         ipv4_address: 172.30.0.2 
     privileged: true  # Habilitar privilegios adicionales
     command: >
-      bash -c "/usr/local/bin/iptables-rules.sh && tail -f /dev/null"
+      bash -c "/usr/local/bin/iptables-rules.sh && ip route add 172.40.0.0/24 via 172.30.0.1 && tail -f /dev/null"
 
 networks:
   production_net:

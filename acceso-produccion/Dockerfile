@@ -6,14 +6,12 @@ RUN apt-get update && apt-get install -y \
     rsync \
     curl \
     nano \
-    iptables
+    iptables \
+    iproute2 \
+    iputils-ping
 
 # Copiar el script de iptables al contenedor
 COPY iptables-rules.sh /usr/local/bin/iptables-rules.sh
-
-# Verificar que el archivo está copiado
-RUN ls -l /usr/local/bin/iptables-rules.sh
-
 
 # Dar permisos de ejecución al script
 RUN chmod +x /usr/local/bin/iptables-rules.sh
