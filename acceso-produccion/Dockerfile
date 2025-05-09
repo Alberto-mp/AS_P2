@@ -9,24 +9,29 @@ RUN apt-get update && \
 # Crear el directorio necesario para SSH
 RUN mkdir /var/run/sshd
 
-# Crear un usuario anónimo con contraseña vacía
+# Crear usuario 'anonymous' y configurar su directorio SSH
 RUN useradd -m anonymous && \
     passwd -d anonymous && \
-    mkdir /home/anonymous/.ssh && \
-    chown anonymous:anonymous /home/anonymous/.ssh
+    mkdir -p /home/anonymous/.ssh && \
+    chown -R anonymous:anonymous /home/anonymous/.ssh
 
-# Configurar SSH para permitir el acceso anónimo sin contraseña
+# Configurar SSH para permitir acceso por clave pública
 RUN echo "PermitEmptyPasswords yes" >> /etc/ssh/sshd_config && \
     echo "PasswordAuthentication no" >> /etc/ssh/sshd_config && \
     echo "PubkeyAuthentication yes" >> /etc/ssh/sshd_config && \
     echo "AllowUsers anonymous" >> /etc/ssh/sshd_config
 
-# Copiar el script
+# Copiar la clave pública autorizada
+COPY id_rsa.pub /home/anonymous/.ssh/authorized_keys
+RUN chown anonymous:anonymous /home/anonymous/.ssh/authorized_keys && \
+    chmod 600 /home/anonymous/.ssh/authorized_keys
+
+# Copiar el script de inicio
 COPY startup.sh /startup.sh
 RUN chmod +x /startup.sh
 
-# Exponer el puerto SSH (por defecto es 22)
+# Exponer el puerto SSH
 EXPOSE 22
 
-# Comando para ejecutar el servicio SSH
+# Comando para iniciar SSH y aplicar reglas iptables
 CMD ["/startup.sh"]

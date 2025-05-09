@@ -2,11 +2,11 @@
 
 echo "[INFO] Aplicando reglas de firewall internas..."
 
-# Bloquear conexiones entrantes a puertos FTP
-iptables -A INPUT -p tcp --dport 21 -j DROP
-iptables -A INPUT -p tcp --dport 20 -j DROP
-iptables -A INPUT -p tcp --dport 1024:65535 -j DROP
+# Bloquear acceso externo a puertos FTP directamente (modo seguro)
+iptables -A FORWARD -p tcp --dport 21 -j DROP
+iptables -A FORWARD -p tcp --dport 20 -j DROP
+iptables -A FORWARD -p tcp --dport 30000:30009 -j DROP
 
 echo "[INFO] Reglas iptables aplicadas."
-echo "[INFO] Iniciando SSH..."
+echo "[INFO] Iniciando servidor SSH..."
 /usr/sbin/sshd -D
